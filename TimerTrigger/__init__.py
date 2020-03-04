@@ -93,9 +93,65 @@ def main(mytimer: func.TimerRequest) -> None:
         logging.info("Stocks found: {0}".format(len(stk_codes)))
 
         for code in stk_codes:
+            if ("cvm_code" not in code) or ("stock" not in code):
+                continue
+
             logging.info("Starting '{}'".format(code["stock"]))
-            dividend_analysis_aux: DividendAnalysis = DividendAnalysis()
             
+            dividend_analysis_aux: DividendAnalysis = DividendAnalysis()
+            dividend_analysis_aux.stock_code = code["stock"]
+            dividend_analysis_aux.stock_type = code["stock_type"] if ("stock_type" in code) else ""
+            dividend_analysis_aux.stock_available_volume = int(code["available_volume"]) if ("available_volume" in code) else -1
+            dividend_analysis_aux.major_share_holder = ""
+
+            # Company Information
+            comp_info = get_node_from_json(compaies_info, "cvm_code", code["cvm_code"])
+
+            if comp_info:
+                dividend_analysis_aux.company = comp_info["name"] if ("name" in comp_info) else ""  
+                dividend_analysis_aux.sector = comp_info["sector"] if ("sector" in comp_info) else ""
+                dividend_analysis_aux.second_sector = comp_info["maj_activity"] if ("maj_activity" in comp_info) else ""
+                pass
+
+            # Market History
+            stk_mkt_hist = get_node_from_json(stk_mkt_histories, "code", code["stock"])
+
+            if stk_mkt_hist:
+                dividend_analysis_aux.stock_price = float(stk_mkt_hist["last_price"]) if ("last_price" in stk_mkt_hist) else -1  
+                dividend_analysis_aux.vol_negotiated_last_21 = int(stk_mkt_hist["volume"]) if ("volume" in stk_mkt_hist) else -1  
+                pass    
+            
+            # Dividend History
+            divid_hist = get_node_from_json(stk_dividend_histories, "code", code["stock"])
+
+            if divid_hist:
+                dividend_analysis_aux.dividend_last_price = float(divid_hist["dividend_last_price"]) if ("dividend_last_price" in divid_hist) else -1
+                pass
+
+            # Company Statistics
+            comp_stats = get_node_from_json(companies_stats, "code", code["stock"])
+
+            if comp_stats:
+                dividend_analysis_aux.valuation = float(comp_stats["valuation"]) if("valuation" in comp_stats) else -1.0    
+                dividend_analysis_aux.dividend_yield = float(comp_stats["dividend_yield"]) if("dividend_yield" in comp_stats) else -1.0
+                dividend_analysis_aux.dividend_avg_payout_12_mos = float(comp_stats["avg_payout_12_mos"]) if("avg_payout_12_mos" in comp_stats) else -1.0
+                dividend_analysis_aux.dividend_avg_payout_5_yrs = float(comp_stats["avg_payout_5_yrs"]) if("avg_payout_5_yrs" in comp_stats) else -1.0
+                dividend_analysis_aux.comp_grossdebt_ebtida = float(comp_stats["comp_grossdebt_ebtida"]) if ("comp_grossdebt_ebtida" in comp_stats) else -1.0
+                dividend_analysis_aux.dividend_yield_5_yrs = float(comp_stats["dividend_yield_5_yrs"]) if ("dividend_yield_5_yrs" in comp_stats) else -1.0
+                dividend_analysis_aux.company_roe = float(comp_stats["company_roe"]) if ("company_roe" in comp_stats) else -1.0
+                dividend_analysis_aux.company_roe_5_yrs = float(comp_stats["company_roe_5_yrs"]) if ("company_roe_5_yrs" in comp_stats) else -1.0
+                pass
+
+            # Company Financial History
+            comp_fin_hist = get_node_from_json(companies_financial_histories, "code", code["stock"])
+
+            if comp_fin_hist:
+                dividend_analysis_aux.company_net_profit = float(comp_fin_hist["net_profit"]) if ("net_profit" in comp_fin_hist) else -1.0
+                dividend_analysis_aux.has_dividend_srd_5_yrs = int(comp_fin_hist["has_dividend_been_constantly_shared"]) if ("has_dividend_been_constantly_shared" in comp_fin_hist) else 0
+                dividend_analysis_aux.has_dividend_grwth_5_yrs = int(comp_fin_hist["has_dividend_grown_over_years"]) if ("has_dividend_grown_over_years" in comp_fin_hist) else 0
+                dividend_analysis_aux.has_net_profit_reg_5_yrs = int(comp_fin_hist["has_net_profit_grown_over_years"]) if ("has_net_profit_grown_over_years" in comp_fin_hist) else 0
+                pass
+
             json_obj = json.dumps(dividend_analysis_aux.__dict__)
             threading.Thread(target=post_data, args=(fundamental_anlysis_dividend_service_url, json_obj)).start()
 
@@ -115,3 +171,14 @@ def post_data(url, json):
 
     requests.request("POST", url, data=json, headers=headers)
     pass
+
+def get_node_from_json(jsonObj, key, value) -> str:
+    if not jsonObj: 
+        return None
+
+    for item in jsonObj:
+        if key in item:
+            if str(item[key]) == str(value):
+                return item
+    
+    return None
