@@ -5,6 +5,7 @@ import json
 import requests
 import pathlib
 import threading
+import time
 
 from .model.dividend_analysis import DividendAnalysis
 from typing import List
@@ -152,6 +153,8 @@ def main(mytimer: func.TimerRequest) -> None:
 
             json_obj = json.dumps(dividend_analysis_aux.__dict__)
             threading.Thread(target=post_data, args=(fundamental_anlysis_dividend_service_url, json_obj)).start()
+
+            time.sleep(0.3)
 
         logging.info("Timer job is done. Waiting for the next execution time")
         pass
