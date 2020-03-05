@@ -23,5 +23,27 @@ class DividendAnalysis():
     has_net_profit_reg_5_yrs: int
 
     def __init__(self):
+        self.stock_code = ''
+        self.company = ''
+        self.sector = ''
+        self.second_sector = ''
+        self.stock_price = 0.00
+        self.stock_type = ''
+        self.valuation = 0.00
+        self.stock_available_volume = 0
+        self.vol_negotiated_last_21 = 0
+        self.dividend_last_price = 0.00
+        self.company_net_profit = 0.00
+        self.dividend_yield = 0.00
+        self.dividend_avg_payout_12_mos = 0.00
+        self.dividend_avg_payout_5_yrs = 0.00
+        self.major_share_holder = ''
+        self.company_roe = 0.00
+        self.company_roe_5_yrs = 0.00
+        self.comp_grossdebt_ebtida = 0.00
+        self.dividend_yield_5_yrs = 0.00
+        self.has_dividend_srd_5_yrs = 0
+        self.has_dividend_grwth_5_yrs = 0
+        self.has_net_profit_reg_5_yrs = 0
         pass
     pass

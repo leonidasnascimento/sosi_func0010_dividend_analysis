@@ -15,12 +15,10 @@ from azure.storage.blob import (
     PublicAccess
 )
 
-SETTINGS_FILE_PATH = pathlib.Path(
-    __file__).parent.parent.__str__() + "//local.settings.json"
+SETTINGS_FILE_PATH = pathlib.Path(__file__).parent.parent.__str__() + "//local.settings.json"
 
 def main(mytimer: func.TimerRequest) -> None:
-    utc_timestamp = datetime.datetime.utcnow().replace(
-        tzinfo=datetime.timezone.utc).isoformat()
+    utc_timestamp = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat()
 
     try:
         logging.info("'TimerJobSosiMs0010DividendAnalysis' has begun")

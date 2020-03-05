@@ -1,9 +1,9 @@
 asn1crypto==0.24.0
 astroid==2.2.5
-azure-common==1.1.23
-azure-functions==1.0.4
-azure-storage-blob==2.1.0
-azure-storage-common==2.1.0
+azure-common
+azure-functions
+azure-storage-blob
+azure-storage-common
 beautifulsoup4==4.8.0
 CacheControl==0.12.5
 cachetools==3.1.1
