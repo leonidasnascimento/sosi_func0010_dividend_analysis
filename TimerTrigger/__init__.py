@@ -10,11 +10,6 @@ import time
 from .model.dividend_analysis import DividendAnalysis
 from typing import List
 from configuration_manager.reader import reader
-from azure.storage.blob import (
-    Blob,
-    BlockBlobService,
-    PublicAccess
-)
 
 SETTINGS_FILE_PATH = pathlib.Path(__file__).parent.parent.__str__() + "//local.settings.json"
 
