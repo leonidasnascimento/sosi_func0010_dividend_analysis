@@ -7,7 +7,7 @@ azure-storage-common
 beautifulsoup4==4.8.0
 CacheControl==0.12.5
 cachetools==3.1.1
-certifi==2019.6.16
+certifi==2022.12.7
 cffi==1.12.3
 chardet==3.0.4
 colorama==0.4.1
